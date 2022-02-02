@@ -297,8 +297,8 @@ Possiamo anche notare che quando una soluzione non viene trovata, l'agente si mu
 
 Ecco alcuni plot dei test effettuati
 
-- **1:**![plot](/home/fabio/università/intelligent models/labyrinth_agent/results/e25000s400d10x10x20a100/plot.png)
+- **1:**![plot](/home/fabio/università/intelligent models/agent_in_labyrinth_walls/results/e25000s400d10x10x20a100/plot.png)
 
-- **3:**  ![plot](/home/fabio/università/intelligent models/labyrinth_agent/results/e25000s400d30x30x20a400/plot.png)
+- **3:**  ![plot](/home/fabio/università/intelligent models/agent_in_labyrinth_walls/results/e25000s400d30x30x20a400/plot.png)
 
-- **7:** ![plot](/home/fabio/università/intelligent models/labyrinth_agent/results/e50000s400d30x30x20a400/plot.png)
+- **7:** ![plot](/home/fabio/università/intelligent models/agent_in_labyrinth_walls/results/e50000s400d30x30x20a400/plot.png)
