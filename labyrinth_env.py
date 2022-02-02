@@ -5,34 +5,22 @@ from gym import spaces
 import numpy as np
 import random
 
-actions = {
-    "U": 0,
-    "D": 1,
-    "L": 2,
-    "R": 3
-}
+actions = {"U": 0, "D": 1, "L": 2, "R": 3}
 
 actionFromId = ["UP", "DOWN", "LEFT", "RIGHT"]
 
-cells = {
-    "empty": 0,
-    "wall": 1,
-    "agent": 2,
-    "entrance": 3,
-    "exit": 4
-}
+cells = {"empty": 0, "wall": 1, "agent": 2, "entrance": 3, "exit": 4}
 
 chars = {
     "empty": "   ",
     "wall": " ■ ",
     "agent": " A ",
     "entrance": " E ",
-    "exit": " U "
+    "exit": " U ",
 }
 
 
 class LabyrinthEnv(gym.Env):
-
     def __init__(self, max_actions, grid_h=0, grid_w=0, wall_percentage=0, load=False):
         """
         Initialized the maze environment
@@ -49,7 +37,7 @@ class LabyrinthEnv(gym.Env):
             self.labyrinth_size = {  # labyrinth exit (grid_h, grid_w)
                 "h": grid_h + 2,
                 "w": grid_w + 2,
-                "p": wall_percentage
+                "p": wall_percentage,
             }
             """
             Labyrinth representation
@@ -63,10 +51,7 @@ class LabyrinthEnv(gym.Env):
             self.labyrinth = self.generate_labyrinth()
             self.save_labyrinth()
 
-        self.agent_position = {  # labyrinth entrance (1,1)
-            "x": 1,
-            "y": 1
-        }
+        self.agent_position = {"x": 1, "y": 1}  # labyrinth entrance (1,1)
         self.max_actions = max_actions
 
         """
@@ -99,10 +84,7 @@ class LabyrinthEnv(gym.Env):
         Loads the labyrinth from a file
         """
         self.labyrinth = np.loadtxt("labyrinth", delimiter=" ", dtype=int)
-        self.labyrinth_size = {
-            "h": len(self.labyrinth),
-            "w": len(self.labyrinth[0])
-        }
+        self.labyrinth_size = {"h": len(self.labyrinth), "w": len(self.labyrinth[0])}
         print(self.labyrinth_size)
 
     def render(self, mode="human"):
@@ -112,28 +94,27 @@ class LabyrinthEnv(gym.Env):
         labyrinth_with_info = self.labyrinth.copy()
         labyrinth_with_info[1][1] = 3  # entrance
         labyrinth_with_info[labyrinth_h - 2][labyrinth_w - 2] = 4  # exit
-        labyrinth_with_info[self.agent_position["y"]][self.agent_position["x"]] = 2  # agent
+        labyrinth_with_info[self.agent_position["y"]][
+            self.agent_position["x"]
+        ] = 2  # agent
 
         for y in range(labyrinth_h):
             for x in range(labyrinth_w):
                 cell = labyrinth_with_info[y][x]
                 if cell == cells["wall"]:  # 1
-                    print(chars["wall"], end='')
+                    print(chars["wall"], end="")
                 elif cell == cells["agent"]:  # 2
-                    print(chars["agent"], end='')
+                    print(chars["agent"], end="")
                 elif cell == cells["entrance"]:  # 3
-                    print(chars["entrance"], end='')
+                    print(chars["entrance"], end="")
                 elif cell == cells["exit"]:  # 4
-                    print(chars["exit"], end='')
+                    print(chars["exit"], end="")
                 else:  # 0
-                    print(chars["empty"], end='')
-            print('')
+                    print(chars["empty"], end="")
+            print("")
 
     def reset(self):
-        self.agent_position = {
-            "x": 1,
-            "y": 1
-        }
+        self.agent_position = {"x": 1, "y": 1}
         _, observation = self.next_observation()
         return observation
 
@@ -142,7 +123,7 @@ class LabyrinthEnv(gym.Env):
         Transforms the state list into his binary representation
         Returns the int value of the binary string
         """
-        return int(''.join(map(str, state)), 2)
+        return int("".join(map(str, state)), 2)
 
     def next_observation(self, action=None):
         agent_x = self.agent_position["x"]
@@ -176,14 +157,12 @@ class LabyrinthEnv(gym.Env):
             self.labyrinth[agent_y - 1][agent_x - 1],  # 0
             self.labyrinth[agent_y - 1][agent_x],  # 1
             self.labyrinth[agent_y - 1][agent_x + 1],  # 2
-
             self.labyrinth[agent_y][agent_x - 1],  # 3
             # A, the agent is here
             self.labyrinth[agent_y][agent_x + 1],  # 4
-
             self.labyrinth[agent_y + 1][agent_x - 1],  # 5
             self.labyrinth[agent_y + 1][agent_x],  # 6
-            self.labyrinth[agent_y + 1][agent_x + 1]  # 7
+            self.labyrinth[agent_y + 1][agent_x + 1],  # 7
         ]
 
         return bumped_wall, self.state_to_int(state)
@@ -196,8 +175,10 @@ class LabyrinthEnv(gym.Env):
         if bumped_wall:
             reward = -5
 
-        if self.agent_position["x"] == self.labyrinth_size["w"] - 2 \
-                and self.agent_position["y"] == self.labyrinth_size["h"] - 2:
+        if (
+            self.agent_position["x"] == self.labyrinth_size["w"] - 2
+            and self.agent_position["y"] == self.labyrinth_size["h"] - 2
+        ):
             done = True
             reward = 10
 
@@ -210,13 +191,20 @@ class LabyrinthEnv(gym.Env):
     def generate_labyrinth(self):
         labyrinth_h = self.labyrinth_size["h"]
         labyrinth_w = self.labyrinth_size["w"]
-        walls_to_insert = int(((labyrinth_h - 2) * (labyrinth_w - 2) * self.labyrinth_size["p"]) / 100)
+        walls_to_insert = int(
+            ((labyrinth_h - 2) * (labyrinth_w - 2) * self.labyrinth_size["p"]) / 100
+        )
 
         labyrinth = np.zeros((labyrinth_h, labyrinth_w), dtype=int)
 
         for y in range(labyrinth_h):
             for x in range(labyrinth_w):
-                if (y == 0) or (y == labyrinth_h - 1) or (x == 0) or (x == labyrinth_w - 1):
+                if (
+                    (y == 0)
+                    or (y == labyrinth_h - 1)
+                    or (x == 0)
+                    or (x == labyrinth_w - 1)
+                ):
                     labyrinth[y][x] = 1
 
         while walls_to_insert:

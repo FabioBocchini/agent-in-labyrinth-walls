@@ -88,13 +88,15 @@ class QLearning(object):
             print("Action:\t" + labyrinth_env.actionFromId[action])
             print("Reward:\t{}".format(reward))
             print("Return:\t{}".format(str(tot_reward)))
-            print('')
+            print("")
 
             if done:
                 print("The Agent has reached the exit or has no more moves left")
-                input('Press any key to continue...')
+                input("Press any key to continue...")
 
-    def training(self, epochs=50000, steps=200, alpha=0.1, gamma=1.0, eps=1.0, plot=True):
+    def training(
+        self, epochs=50000, steps=200, alpha=0.1, gamma=1.0, eps=1.0, plot=True
+    ):
         """
         Trains the Q-Learning Algorithm and saves the Q matrix built
         Default hyperparameters
@@ -104,7 +106,7 @@ class QLearning(object):
             epochs = 50000 is the max number of epochs
             steps = 200 is the max number of actions ( step ) per epoch
         """
-        # inizializing Q(state, action) matrix to zero
+        # initializing Q(state, action) matrix to zero
         q = {}
         for state in self.env.state_space:
             for action in self.env.possible_actions:
@@ -118,7 +120,7 @@ class QLearning(object):
 
         for i in range(epochs):
             if i % int(epochs / 10) == 0:
-                print('epochs passed: ', i)
+                print("epochs passed: ", i)
 
             done = False
             ep_rewards = 0
@@ -126,14 +128,21 @@ class QLearning(object):
             observation = self.env.reset()
             while not done and num_actions <= steps:
                 rand = np.random.random()
-                action = self.max_action(q, observation, self.env.possible_actions) if rand < (1 - eps) \
+                action = (
+                    self.max_action(q, observation, self.env.possible_actions)
+                    if rand < (1 - eps)
                     else self.env.action_space_sample()
+                )
                 observation_next, reward, done, info = self.env.step(action)
                 num_actions += 1
                 ep_rewards += reward
-                action_next = self.max_action(q, observation_next, self.env.possible_actions)
+                action_next = self.max_action(
+                    q, observation_next, self.env.possible_actions
+                )
                 q[observation, action] = q[observation, action] + alpha * (
-                        reward + gamma * q[observation_next, action_next] - q[observation, action]
+                    reward
+                    + gamma * q[observation_next, action_next]
+                    - q[observation, action]
                 )
                 observation = observation_next
             if eps - 2 / epochs > 0:

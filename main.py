@@ -20,19 +20,24 @@ if __name__ == "__main__":
 
     env = None
 
-    if lab_input == '1':
+    if lab_input == "1":
         max_actions = int(input("Max actions: "))
         env = LabyrinthEnv(max_actions=max_actions, load=True)
 
-    elif lab_input == '2':
+    elif lab_input == "2":
         grid_h = int(input("Grid height: "))
         grid_w = int(input("Grid Width: "))
         wall_percentage = int(input("Wall percentage:"))
         max_actions = int(input("Max actions: "))
-        env = LabyrinthEnv(max_actions=max_actions, grid_h=grid_h, grid_w=grid_w, wall_percentage=wall_percentage)
+        env = LabyrinthEnv(
+            max_actions=max_actions,
+            grid_h=grid_h,
+            grid_w=grid_w,
+            wall_percentage=wall_percentage,
+        )
 
     else:
-        print('End\n')
+        print("End\n")
         sys.exit()
 
     QL = QLearning(env)
@@ -47,17 +52,17 @@ if __name__ == "__main__":
     )
     utils.clear_screen()
 
-    if menu_input == '1':
+    if menu_input == "1":
         print("Training\n")
         QL.training(epochs=25000, steps=400, alpha=0.1, gamma=1.0, eps=1.0, plot=True)
 
-    elif menu_input == '2':
+    elif menu_input == "2":
         print("Execute\n")
         QL.execute(step_by_step=False)
 
-    elif menu_input == '3':
+    elif menu_input == "3":
         print("Execute\n")
         QL.execute(step_by_step=True)
 
     else:
-        print('End\n')
+        print("End\n")
