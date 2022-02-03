@@ -66,8 +66,8 @@ L'osservazione di un agente è rappresentata dal vicinato di Moore, ovvero conos
 ```python
 """
 0 1 2 
-3 A 6
-7 8 9
+3 A 4
+5 6 7
 """
 ```
 
@@ -94,13 +94,20 @@ self.state_space = [i for i in range(256)]
     def generate_labyrinth(self):
         labyrinth_h = self.labyrinth_size["h"]
         labyrinth_w = self.labyrinth_size["w"]
-        walls_to_insert = int(((labyrinth_h-2)*(labyrinth_w-2)self.labyrinth_size["p"])/100)
+        walls_to_insert = int(
+            ((labyrinth_h - 2) * (labyrinth_w - 2) * self.labyrinth_size["p"]) / 100
+        )
 
         labyrinth = np.zeros((labyrinth_h, labyrinth_w), dtype=int)
 
         for y in range(labyrinth_h):
             for x in range(labyrinth_w):
-                if (y == 0) or (y == labyrinth_h - 1) or (x == 0) or (x == labyrinth_w - 1):
+                if (
+                    (y == 0)
+                    or (y == labyrinth_h - 1)
+                    or (x == 0)
+                    or (x == labyrinth_w - 1)
+                ):
                     labyrinth[y][x] = 1
 
         while walls_to_insert:
@@ -133,11 +140,9 @@ state = [
             self.labyrinth[agent_y - 1][agent_x - 1],  # 0
             self.labyrinth[agent_y - 1][agent_x],  # 1
             self.labyrinth[agent_y - 1][agent_x + 1],  # 2
-
             self.labyrinth[agent_y][agent_x - 1],  # 3
             # A, the agent is here
             self.labyrinth[agent_y][agent_x + 1],  # 4
-
             self.labyrinth[agent_y + 1][agent_x - 1],  # 5
             self.labyrinth[agent_y + 1][agent_x],  # 6
             self.labyrinth[agent_y + 1][agent_x + 1]  # 7
@@ -161,8 +166,10 @@ Per ultima cosa controlla che l'esecuzione sia finita, ritornando `done=True` se
         if bumped_wall:
             reward = -5
 
-        if self.agent_position["x"] == self.labyrinth_size["w"] - 2 \
-                and self.agent_position["y"] == self.labyrinth_size["h"] - 2:
+        if (
+            self.agent_position["x"] == self.labyrinth_size["w"] - 2
+            and self.agent_position["y"] == self.labyrinth_size["h"] - 2
+        ):
             done = True
             reward = 10
 
@@ -181,10 +188,7 @@ La funzione reset riporta l'environment nella posizione di partenza, spostando l
 
 ```python
     def reset(self):
-        self.agent_position = {
-            "x": 1,
-            "y": 1
-        }
+        self.agent_position = {"x": 1, "y": 1}
         _, observation = self.next_observation()
         return observation
 ```
@@ -215,33 +219,38 @@ dove
       return actions[action]
      
   def training(self, epochs=50000, steps=200, alpha=0.1, gamma=1.0, eps=1.0, plot=True):	[...]
-      for i in range(epochs):
-      	if i % int(epochs / 10) == 0:
-  			print('epochs passed: ', i)
+          for i in range(epochs):
+              if i % int(epochs / 10) == 0:
+                  print("epochs passed: ", i)
   
-          done = False
-          ep_rewards = 0
-          num_actions = 0
-          observation = self.env.reset()
-          while not done and num_actions <= steps:
-              rand = np.random.random()
-              action = \
-              	self.max_action(q, observation, self.env.possible_actions) \
-                  if rand < (1 - eps) \
-              	else self.env.action_space_sample()
-              observation_next, reward, done, info = self.env.step(action)
-              num_actions += 1
-              ep_rewards += reward
-              action_next = self.max_action(q, observation_next, self.env.possible_actions)
-              q[observation, action] = q[observation, action] + alpha * (
-                 reward + gamma * q[observation_next, action_next] - q[observation, action]
-              )
-              observation = observation_next
-          if eps - 2 / epochs > 0:
-              eps -= 2 / epochs
-          else:
-              eps = 0
-          total_rewards[i] = ep_rewards
+              done = False
+              ep_rewards = 0
+              num_actions = 0
+              observation = self.env.reset()
+              while not done and num_actions <= steps:
+                  rand = np.random.random()
+                  action = (
+                      self.max_action(q, observation, self.env.possible_actions)
+                      if rand < (1 - eps)
+                      else self.env.action_space_sample()
+                  )
+                  observation_next, reward, done, info = self.env.step(action)
+                  num_actions += 1
+                  ep_rewards += reward
+                  action_next = self.max_action(
+                      q, observation_next, self.env.possible_actions
+                  )
+                  q[observation, action] = q[observation, action] + alpha * (
+                      reward
+                      + gamma * q[observation_next, action_next]
+                      - q[observation, action]
+                  )
+                  observation = observation_next
+              if eps - 2 / epochs > 0:
+                  eps -= 2 / epochs
+              else:
+                  eps = 0
+              total_rewards[i] = ep_rewards
   [...]
   ```
 
